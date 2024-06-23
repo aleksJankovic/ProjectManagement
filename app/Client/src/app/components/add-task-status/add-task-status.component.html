@@ -1,0 +1,26 @@
+<mat-toolbar>
+    <div class="flex w-full gap-2 items-center min-h-16">
+      <h1>Add Task Status</h1>
+
+      <span class="grow"></span>
+
+      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+        <div class="flex items-center justify-center">
+          <mat-icon>close</mat-icon>
+        </div>
+      </button>
+    </div>
+</mat-toolbar>
+<mat-card>
+    <mat-card-content>
+        <div class="flex-row justify-between mb-3">
+            <mat-label>Status name</mat-label>
+            <mat-form-field class="ml-5 w-1/2">
+                <input matInput placeholder="Task status name..." id="name" [(ngModel)]="taskStatusName">
+            </mat-form-field>
+        </div>
+    </mat-card-content>
+</mat-card>
+<div class="flex items-center justify-end p-4 md:p-5  rounded-b">
+    <button mat-raised-button type="submit" color="primary" (click)="saveTaskStatus()">Save</button>
+</div>

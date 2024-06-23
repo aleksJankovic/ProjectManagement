@@ -1,0 +1,35 @@
+<div class="flex flex-col select-none">
+  <mat-toolbar>
+    <div class="flex w-full gap-2 items-center min-h-16">
+      <h1>Crop Avatar</h1>
+
+      <span class="grow"></span>
+
+      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+        <div class="flex items-center justify-center">
+          <mat-icon>close</mat-icon>
+        </div>
+      </button>
+    </div>
+  </mat-toolbar>
+
+  <div class="flex flex-col p-2 gap-2">
+    <image-cropper
+      [imageFile]="selectedFile"
+      [roundCropper]="true"
+      [resizeToWidth]="256"
+      [resizeToHeight]="256"
+      (imageCropped)="imageCropped($event)"
+      (imageLoaded)="imageLoaded($event)"
+      (cropperReady)="cropperReady()"
+      (loadImageFailed)="loadImageFailed()"
+    ></image-cropper>
+
+    <div class="flex w-full justify-center">
+      <span class="grow"></span>
+      <button mat-raised-button color="primary" (click)="uploadAvatar()">UPLOAD</button>
+    </div>
+  </div>
+</div>
+
+

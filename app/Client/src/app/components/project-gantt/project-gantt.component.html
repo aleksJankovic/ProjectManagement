@@ -1,0 +1,206 @@
+<div class="flex flex-col gap-4 justify-center h-[100%]">
+  <div class="flex gap-4 items-center">
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <div class="flex items-center justify-center">
+        <mat-icon>help_outline</mat-icon>
+      </div>
+    </button>
+    <mat-menu #menu="matMenu" class="min-w-full">
+      <div class="menu-content w-200">
+        <div class="w-full">
+          <div class="w-full p-4 text-xl">Legend</div>
+          <mat-divider class="w-full"></mat-divider>
+
+          <div class="legend flex flex-col p-4">
+            <div class="legend-item flex">
+              <p class="text-red-500">
+                &#x27F6; If a task that depends on a previous task start BEFORE
+                the task it depends on is finished
+                <!-- ⟶ -->
+              </p>
+            </div>
+            <div class="legend-item flex">
+              <p class="text-gray-400 mt-4">
+                &#x27F6; If a task that depends on a previous task starts AFTER
+                the task it depends on is finished
+                <!-- ⟶ -->
+              </p>
+            </div>
+
+            <div class="legend-item">
+              <div
+                class="mt-4 w-1/1 h-[20px] bg-blue-800 text-white flex items-center justify-center text-sm task-rectangle"
+              >
+                Task
+              </div>
+              <p class="">
+                The task is completed. It cannot be moved or have dependencies
+                created.
+              </p>
+            </div>
+            <div class="legend-item">
+              <div
+                class="mt-4 bg-blue-200 text-white flex items-center justify-center text-sm task-rectangle"
+              >
+                Grayed task
+              </div>
+              <p class="">
+                Task is not completed. It can be moved and have dependencies
+                created.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-menu>
+
+    <mat-form-field class="w-96" subscriptSizing="dynamic">
+      <mat-label class="select-none">
+        <div class="flex items-center justify-between gap-2">
+          <p>Search Tasks</p>
+          <mat-icon class="scale-125">search</mat-icon>
+        </div>
+      </mat-label>
+
+      <input matInput (keyup)="search($event)" />
+    </mat-form-field>
+
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Filter by status</mat-label>
+
+      <mat-select
+        [value]="selectedStatus"
+        [(ngModel)]="selectedStatus"
+        (ngModelChange)="onStatusFilterChange($event)"
+      >
+        <mat-option [value]="defaultStatus">All Statuses</mat-option>
+        @for (taskStatus of taskStatuses; track taskStatus.id) {
+        <mat-option [value]="taskStatus.id">{{ taskStatus.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Filter by priority</mat-label>
+
+      <mat-select
+        [value]="selectedPriority"
+        [(ngModel)]="selectedPriority"
+        (ngModelChange)="onPriorityFilterChange($event)"
+      >
+        <mat-option [value]="defaultPriority">All Priorities</mat-option>
+        @for (taskPriority of taskPriorities; track taskPriority.taskPriorityId)
+        {
+        <mat-option [value]="taskPriority.taskPriorityId">{{
+          taskPriority.name
+        }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <span class="grow"></span>
+
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Selected view</mat-label>
+
+      <mat-select
+        [value]="selectedViewType"
+        [(ngModel)]="selectedViewType"
+        (ngModelChange)="selectView($event)"
+      >
+        <mat-option *ngFor="let view of views" [value]="view.value">{{
+          view.name
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="scrollToToday()">
+      Scroll to today
+    </button>
+
+    <span class="grow"></span>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openAddTask()"
+      [disabled]="
+        !(projectId | hasProjectPermission : ProjectPermission.CREATE_TASK)
+      "
+    >
+      Add Task
+    </button>
+  </div>
+
+  <mat-divider class="w-full"></mat-divider>
+
+  <ngx-gantt
+    #gantt
+    [items]="ganttItems"
+    [groups]="ganttGroups"
+    [viewType]="viewType"
+    [draggable]="true"
+    [selectable]="true"
+    [virtualScrollEnabled]="true"
+    [multiple]="true"
+    [linkable]="true"
+    [showTodayLine]="true"
+    (barClick)="barClick($event)"
+    (selectedChange)="selectedChange($event)"
+    (dragStarted)="dragStarted($event)"
+    (dragEnded)="dragEnded($event)"
+    (lineClick)="linkClick($event)"
+    (linkDragEnded)="linkEnded($event)"
+    class="mat-elevation-z8 select-none mat-pr overflow-y-auto overflow-x-auto"
+  >
+    <ngx-gantt-table>
+      <ngx-gantt-column
+        name="Task Name"
+        width="160px"
+        [showExpandIcon]="true"
+        class="select-none"
+      >
+        <ng-template #cell let-item="item">
+          {{ item.title }}
+        </ng-template>
+      </ngx-gantt-column>
+
+      <ngx-gantt-column name="Status" width="120px">
+        <ng-template #cell let-item="item">
+          {{ item.taskStatusName }}
+        </ng-template>
+      </ngx-gantt-column>
+
+      <ngx-gantt-column name="Priority" width="120px">
+        <ng-template #cell let-item="item">
+          <ng-container *ngIf="item.taskStatusId != 3">
+            <div class="flex gap-2 items-center justify-around">
+              <p>{{ item.taskPriorityName }}</p>
+              <div
+                class="h-4 w-4"
+                [ngStyle]="{
+                  'background-color': item.taskPriorityColor,
+                  border: '1px solid black'
+                }"
+              ></div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="item.taskStatusId === 3"> / </ng-container>
+        </ng-template>
+      </ngx-gantt-column>
+
+      <ngx-gantt-column name="Deadline" width="120px">
+        <ng-template #cell let-item="item">
+          <ng-container *ngIf="item.taskStatusId != 3">
+            {{ item.end | date : "dd-MM-yyyy" }}
+          </ng-container>
+          <ng-container *ngIf="item.taskStatusId === 3"> / </ng-container>
+        </ng-template>
+      </ngx-gantt-column>
+    </ngx-gantt-table>
+
+    <ng-template #bar let-item="item">
+      <span class="text-white">&nbsp;&nbsp;{{ item.title }}</span>
+    </ng-template>
+  </ngx-gantt>
+</div>

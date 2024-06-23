@@ -1,0 +1,155 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <div class="min-h-screen flex flex-nowrap">
+    <div
+      class="basis-1/2 hidden xl:flex flex-col justify-center items-center bg-gradient-to-bl from-[#a9edf6] to-[#6dafb8] select-none"
+    >
+      <img
+        ngSrc="/assets/logo.png"
+        alt="Logic Tenacity Logo"
+        height="394"
+        width="633"
+      />
+    </div>
+
+    <div
+      *ngIf="!showForgotPasswordForm"
+      class="grow flex flex-col justify-center items-center gap-4"
+    >
+      <div class="flex flex-col justify-center items-center gap-2 select-none">
+        <h1 class="font-bold text-6xl">WELCOME</h1>
+        <h2 class="text-2xl">Please login</h2>
+      </div>
+
+      <div class="flex flex-col min-w-80 items-center justify-between gap-4">
+        <mat-form-field class="w-full">
+          <mat-label class="select-none" for="email">Email</mat-label>
+          <input
+            matInput
+            type="email"
+            name="email"
+            id="email"
+            required
+            [(ngModel)]="email"
+            (keyup.enter)="onSubmit()"
+            formControlName="email"
+          />
+          <mat-error *ngIf="emailFormControl.hasError('required')"
+            >Email is required</mat-error
+          >
+          <mat-error *ngIf="emailFormControl.hasError('email')"
+            >Invalid email format</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label class="select-none" for="password"
+            >Password</mat-label
+          >
+          <input
+            matInput
+            type="password"
+            name="password"
+            id="password"
+            required
+            [(ngModel)]="password"
+            formControlName="password"
+            (keyup.enter)="onSubmit()"
+          />
+
+          <mat-error
+            *ngIf="
+            passwordFormControl.invalid &&
+            (passwordFormControl.dirty || passwordFormControl.touched)
+          "
+          >
+            Password is required.
+          </mat-error>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          class="w-full"
+          (click)="onSubmit()"
+        >
+          Login
+        </button>
+
+        <a class="hover:underline" (click)="toggleForgotPasswordForm()"
+          >Forgot password? Click here to reset it</a
+        >
+
+        <div
+          class="w-full bg-[lightcoral] rounded-xl flex flex-wrap items-center justify-center gap-2 p-2 select-none"
+          *ngIf="errorMessage"
+        >
+          <p
+            class="w-full text-[darkred] text-3 italic flex items-center justify-center"
+          >
+            {{ errorMessage }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="showForgotPasswordForm"
+      class="grow flex flex-col justify-center items-center gap-4"
+    >
+      <div class="flex flex-col min-w-80 items-center justify-between gap-4">
+        <mat-form-field
+          [formGroup]="forgotForm"
+          class="flex flex-col w-full"
+        >
+          <mat-label class="text-xl select-none" for="femail">Email</mat-label>
+          <!--
+        <p
+          *ngIf="forgotForm.get('email').errors?.['required'] && forgotForm.get('email').touched"
+          class="italic text-sm text-red-600"
+        >
+          Email is required.
+        </p>
+        -->
+          <!--
+          <p
+            *ngIf="forgotForm.get('email').errors?.['email'] && forgotForm.get('email').touched"
+            class="italic text-sm text-red-600"
+          >
+            Email is in wrong format.
+          </p>
+          -->
+          <input
+            matInput
+            formControlName="email"
+            type="email"
+            name="femail"
+            id="femail"
+            required
+            placeholder="test@gmail.com"
+          />
+
+          <mat-error *ngIf="emailFormControl.hasError('required')"
+            >Email is required</mat-error
+          >
+          <mat-error *ngIf="emailFormControl.hasError('email')"
+            >Invalid email format</mat-error
+          >
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          class="w-full"
+          (click)="forgotPasswordSubmit()"
+        >
+          Reset password
+        </button>
+
+        <a class="hover:underline" (click)="toggleForgotPasswordForm()"
+          >Go back to login</a
+        >
+      </div>
+    </div>
+  </div>
+</form>

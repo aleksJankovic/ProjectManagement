@@ -1,0 +1,56 @@
+<mat-expansion-panel class="w-[36rem]">
+  <mat-expansion-panel-header class="select-none">
+    <mat-panel-title>Chat with our AI Assistant</mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div class="flex flex-col gap-1 min-h-96 max-h-96 overflow-y-auto" #scrollContainer>
+    <div class="flex items-center justify-center w-full grow h-full" *ngIf="messages.length==0 && !generating">
+      <p>Messages are not recorded</p>
+    </div>
+
+    <div *ngFor="let message of messages" class="p-1">
+      <mat-card class="mat-elevation-z6">
+        <mat-card-header>
+          <mat-card-title>{{message.role == 'assistant' ? 'Logic Tenacity - AI Assistant' : 'You'}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <markdown lineNumbers>{{message.content}}</markdown>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="mat-elevation-z6" *ngIf="generating">
+      <mat-card-header>
+        <mat-card-title>Logic Tenacity - AI Assistant</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="flex items-center justify-between gap-2">
+          <p>Generating answer...</p>
+          <mat-spinner [diameter]="32"></mat-spinner>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-action-row class="!p-2">
+    <div class="w-full flex items-center justify-center gap-2">
+      <mat-form-field class="w-full">
+        <mat-label>Enter your message here</mat-label>
+        <input matInput [formControl]="question" #input maxlength="200" minlength="2" (keyup.enter)="submitQuestion()"
+               placeholder="Ask question here...">
+        <mat-error *ngIf="question.hasError('required')">
+          Question must not be empty
+        </mat-error>
+        <mat-error *ngIf="question.hasError('minlength')">
+          Question must have at least 2 characters
+        </mat-error>
+        <mat-error *ngIf="question.hasError('maxlength')">
+          Question can't have above 200 characters
+        </mat-error>
+        <mat-hint align="end">{{input.value.length || 0}}/200</mat-hint>
+      </mat-form-field>
+
+      <button mat-raised-button color="accent" [disabled]="generating" (click)="clearConversation()">Clear</button>
+    </div>
+  </mat-action-row>
+</mat-expansion-panel>

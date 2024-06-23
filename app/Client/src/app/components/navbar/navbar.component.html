@@ -1,0 +1,157 @@
+<mat-toolbar color="primary">
+  <span class="flex space-x-2">
+    <a
+      mat-button
+      *ngFor="let button of buttons"
+      [routerLink]="button.link"
+      routerLinkActive="selected"
+    >
+      <span class="flex justify-center items-center gap-2">
+        <mat-icon>{{ button.icon }}</mat-icon>
+        <p class="hidden sm:block">{{ button.text }}</p>
+      </span>
+    </a>
+  </span>
+
+  <span class="grow"></span>
+
+  <button
+    mat-button
+    [matMenuTriggerFor]="notificationMenu"
+    (click)="$event.stopPropagation(); readNotifications()"
+  >
+    <div class="flex items-center justify-center">
+      <mat-icon *ngIf="notifications.length === 0">notifications_none</mat-icon>
+      <mat-icon *ngIf="notifications.length !== 0 && notRead === 0"
+        >notifications</mat-icon
+      >
+      <mat-icon
+        *ngIf="notifications.length !== 0 && notRead !== 0"
+        [matBadge]="notRead"
+        matBadgeColor="warn"
+        >notifications_active</mat-icon
+      >
+    </div>
+  </button>
+
+  <button
+    mat-button
+    [matMenuTriggerFor]="menu"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex items-center justify-center">
+      <img
+        [src]="avatarUrl"
+        alt="Avatar image"
+        height="32"
+        width="32"
+        class="rounded-full"
+      />
+      <mat-icon>keyboard_arrow_down</mat-icon>
+    </div>
+  </button>
+</mat-toolbar>
+
+<mat-menu #menu="matMenu" class="w-48">
+  <div class="p-4 flex flex-col gap-2" (click)="$event.stopPropagation()">
+    <p class="font-medium">{{ member?.firstName }} {{ member?.lastName }}</p>
+    <p>{{ member?.roleName }}</p>
+  </div>
+  <mat-divider></mat-divider>
+  <a mat-menu-item routerLink="/members/{{ member?.id }}">View Profile</a>
+  <a mat-menu-item routerLink="/members/{{ member?.id }}/edit">Edit Profile</a>
+  <button
+    mat-menu-item
+    [matMenuTriggerFor]="themeMenu"
+    (click)="$event.stopPropagation()"
+  >
+    Themes
+  </button>
+  <mat-divider></mat-divider>
+  <a mat-menu-item (click)="logout()">Logout</a>
+</mat-menu>
+
+<mat-menu #themeMenu="matMenu" class="p-2 select-none">
+  <mat-radio-group>
+    <div
+      *ngFor="let option of options$ | async"
+      (click)="changeTheme(option.value)"
+      class="flex items-center gap-2"
+    >
+      <mat-radio-button
+        [value]="option.value"
+        [checked]="defaultTheme == option.value"
+        >{{ option.label }}</mat-radio-button
+      >
+      <span class="grow"></span>
+      <mat-icon role="img" svgicon="theme-example" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          width="100%"
+          height="100%"
+          viewBox="0 0 80 80"
+          fit=""
+          preserveAspectRatio="xMidYMid meet"
+          focusable="false"
+        >
+          <defs>
+            <path
+              d="M77.87 0C79.05 0 80 .95 80 2.13v75.74c0 1.17-.95 2.13-2.13 2.13H2.13C.96 80 0 79.04 0 77.87V2.13C0 .95.96 0 2.13 0h75.74z"
+              id="a"
+            ></path>
+            <path
+              d="M54 40c3.32 0 6 2.69 6 6 0 1.2 0-1.2 0 0 0 3.31-2.68 6-6 6H26c-3.31 0-6-2.69-6-6 0-1.2 0 1.2 0 0 0-3.31 2.69-6 6-6h28z"
+              id="b"
+            ></path>
+            <path d="M0 0h80v17.24H0V0z" id="c"></path>
+          </defs>
+          <use xlink:href="#a" [attr.fill]="option.backgroundColor"></use>
+          <use xlink:href="#b" [attr.fill]="option.buttonColor"></use>
+          <use xlink:href="#c" [attr.fill]="option.headingColor"></use>
+        </svg>
+      </mat-icon>
+    </div>
+  </mat-radio-group>
+</mat-menu>
+
+<mat-menu #notificationMenu class="p-2 w-[380px] max-h-96">
+  <ng-container
+    class="w-[600px]"
+    *ngIf="notifications.length > 0; else noNotifications"
+  >
+    <div class="flex flex-col gap-4" (click)="$event.stopPropagation()">
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center">
+          <p class="select-none">Notifications</p>
+          <span class="grow"></span>
+          <button mat-button (click)="clearNotifications()">CLEAR</button>
+        </div>
+        <mat-divider class="w-full"></mat-divider>
+        <ng-container *ngFor="let notification of notifications">
+          <ng-container>
+            <div class="flex flex-col">
+              <div class="flex items-center">
+                <p class="text-xs">
+                  {{ notification.createdAt | date : "dd-MM-yyyy" }}
+                </p>
+                <span class="grow"></span>
+                <button
+                  class="flex items-center justify-center"
+                  (click)="clearNotification(notification.id)"
+                >
+                  <mat-icon class="scale-75">close</mat-icon>
+                </button>
+              </div>
+              <p class="text-sm font-bold">{{ notification.title }}</p>
+              <p class="text-sm">{{ notification.description }}</p>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #noNotifications>
+    <button mat-menu-item disabled>No notifications</button>
+  </ng-template>
+</mat-menu>

@@ -1,0 +1,127 @@
+<div class="flex flex-col gap-2">
+
+  <mat-accordion>
+    <mat-expansion-panel hideToggle expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="flex flex-row justify-between">
+          <h1 class="text-xl flex">Project completion rate</h1>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-card class="m-2">
+        <div class="flex flex-col justify-between m-2">
+          <ngx-charts-gauge
+            class="flex"
+            [results]="dataForChart"
+            [angleSpan]="180"
+            [startAngle]="270"
+            [view]="[400, 400]"
+            [legend]="false"
+            [showText]="true"
+            [smallSegments]="5"
+            [units]="'%'"
+            [customColors]="customColors"
+          >
+          </ngx-charts-gauge>
+        </div>
+
+      </mat-card>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <mat-accordion>
+    <mat-expansion-panel hideToggle expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="flex flex-row justify-between">
+          <h1 class="text-xl flex">Incomplete tasks by category</h1>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-card class="m-2">
+        <div class="flex flex-col justify-between m-2">
+          <ngx-charts-bar-horizontal
+            [results]="namesForBarChart"
+            [showXAxisLabel]="true"
+            [noBarWhenZero]="false"
+            [xAxis]="namesForBarChart"
+            [yAxis]="namesForBarChart"
+            [xAxisTickFormatting]="axisFormat"
+          >
+          </ngx-charts-bar-horizontal>
+        </div>
+      </mat-card>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <mat-accordion>
+    <mat-expansion-panel hideToggle expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="flex flex-row justify-between">
+          <h1 class="text-xl flex">Tasks per member</h1>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-card class="m-2">
+        <div class="flex flex-col justify-between m-2">
+          <ngx-charts-bar-horizontal
+            [results]="tasksPerMember"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [noBarWhenZero]="false"
+            [xAxis]="tasksPerMember"
+            [yAxis]="tasksPerMember"
+            [xAxisTickFormatting]="axisFormat"
+            (select)="onSelect($event)"
+          >
+          </ngx-charts-bar-horizontal>
+        </div>
+      </mat-card>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <mat-accordion *ngIf="loaded">
+    <mat-expansion-panel hideToggle expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="flex flex-row justify-between">
+          <h1 class="text-xl flex">Tasks by status</h1>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-card class="m-2">
+        <div class="flex flex-col justify-between m-2">
+          <ngx-charts-bar-horizontal
+            class="flex"
+            [results]="tasksByStatuses"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [noBarWhenZero]="false"
+            [xAxis]="tasksByStatuses"
+            [yAxis]="tasksByStatuses"
+            [xAxisTickFormatting]="axisFormat"
+          >
+          </ngx-charts-bar-horizontal>
+        </div>
+      </mat-card>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <mat-accordion *ngIf="loaded2">
+    <mat-expansion-panel hideToggle expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="flex flex-row justify-between">
+          <h1 class="text-xl flex">Task activities created in last 2 weeks</h1>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-card class="m-2">
+        <div class="flex flex-col justify-between m-2">
+          <ngx-charts-line-chart
+            class="flex"
+            [results]="taskActivitiesInLast2weeks"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [xAxis]="true"
+            [yAxis]="true"
+            [yAxisTickFormatting]="axisFormat"
+          >
+          </ngx-charts-line-chart>
+        </div>
+      </mat-card>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

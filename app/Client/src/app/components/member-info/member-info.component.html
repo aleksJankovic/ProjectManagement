@@ -1,0 +1,41 @@
+<div class="p-4 w-80  flex flex-col justify-between gap-4">
+    <div class="flex items-center justify-between">
+      <span class="grow"></span>
+      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+        <div class="flex items-center justify-center">
+          <mat-icon>close</mat-icon>
+        </div>
+      </button>
+    </div>
+
+  <div class="flex items-center justify-center">
+    <img ngSrc="{{environment.apiUrl}}/Member/{{member.id}}/Avatar" alt="Avatar" class="rounded-full select-none"
+         height="100" width="150">
+  </div>
+
+  <div class="flex flex-col items-center justify-center gap-2">
+    <div class="flex items-center justify-center">
+      <p class="text-2xl font-bold">{{member.firstName}} {{member.lastName}}</p>
+    </div>
+
+
+    <div class="flex flex-col justify-center items-center">
+      <p><strong>Role: </strong>{{ member.roleName }}</p>
+      <p><strong>Email: </strong>{{ member.email }}</p>
+    </div>
+  </div>
+
+  <div class="flex w-full items-center justify-evenly">
+    <button mat-stroked-button [routerLink]="['/members', member.id]" (click)="closeDialog()">
+      <div class="flex items-center justify-center">
+        <mat-icon class="scale-125">person</mat-icon>
+      </div>
+    </button>
+
+    <button [disabled]="member.id !== authMemberId && !(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)" mat-stroked-button [routerLink]="['/members', member.id, 'edit']" (click)="closeDialog()">
+      <div class="flex items-center justify-center">
+        <mat-icon class="scale-125">edit</mat-icon>
+      </div>
+    </button>
+  </div>
+</div>

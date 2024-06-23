@@ -1,0 +1,22 @@
+<mat-sidenav-container class="h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)]" autosize>
+  <mat-sidenav mode="side" opened="true" class="select-none max-w-[250px]">
+    <mat-nav-list>
+      <mat-list-item>
+        <div class="flex items-center gap-2 font-semibold break-word">{{projectDetails?.projectName}}</div>
+      </mat-list-item>
+      <mat-divider class="w-full"></mat-divider>
+      <mat-list-item *ngFor="let button of buttons" [routerLink]="button.link" routerLinkActive="selected">
+        <div class="flex items-center gap-2 text-2xl">
+          <mat-icon class="scale-125">{{ button.icon }}</mat-icon>
+          <p>{{button.text}}</p>
+        </div>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="p-8">
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+

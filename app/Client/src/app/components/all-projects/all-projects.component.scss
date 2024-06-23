@@ -1,0 +1,20 @@
+#gridView
+{
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    row-gap: 20%;
+    column-gap: 10%;
+    width: 80%;
+    float: right;
+}
+
+.project-column {
+    width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+table{
+    width: 100%;
+}

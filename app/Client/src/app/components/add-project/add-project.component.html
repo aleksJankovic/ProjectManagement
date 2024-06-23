@@ -1,0 +1,66 @@
+<div class="h-full flex flex-col select-none">
+  <mat-toolbar>
+    <div class="flex w-full gap-2 items-center min-h-16">
+      <h1>Add Project Form</h1>
+      <span class="grow"></span>
+      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+        <div class="flex items-center justify-center">
+          <mat-icon>close</mat-icon>
+        </div>
+      </button>
+    </div>
+  </mat-toolbar>
+
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="projectForm">
+        <div class="flex flex-col gap-2">
+          <mat-form-field>
+            <mat-label>Choose a name</mat-label>
+            <input matInput type="text" placeholder="Ex. Project Management Software" formControlName="projectName" required>
+            <mat-error *ngIf="projectForm.get('projectName')?.hasError('required')">
+              Project Name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Priority</mat-label>
+            <mat-select formControlName="priorityId" required>
+              <mat-option *ngFor="let priority of projectPriorities" [value]="priority.priorityId">{{ priority.priorityName }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="projectForm.get('priorityId')?.hasError('required')">
+              Priority is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Choose the deadline</mat-label>
+            <input matInput [matDatepicker]="picker" [min]="today" formControlName="deadline">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-error *ngIf="projectForm.get('deadline')?.hasError('required')">
+              Date is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Description</mat-label>
+            <textarea matInput rows="8" placeholder="Ex. This project is about making something similar to Jira..." formControlName="projectDescription" required></textarea>
+            <mat-error *ngIf="projectForm.get('projectDescription')?.hasError('required')">
+              Description is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <div class="flex w-full p-2 gap-2">
+        <span class="grow"></span>
+        <button [disabled]="isLoading" [class.spinner]="isLoading" mat-raised-button color="accent" (click)="generateDescription()">Generate Description with our AI</button>
+        <button [disabled]="isLoading" [class.spinner]="isLoading" mat-raised-button color="primary" (click)="addProject()">Add Project</button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

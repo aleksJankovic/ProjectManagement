@@ -1,0 +1,117 @@
+<div class="h-full flex flex-col select-none">
+  <mat-toolbar>
+    <div class="flex w-full gap-2 items-center min-h-16">
+      <h1 *ngIf="selectedRole">Editing {{selectedRole.name}}
+        <span *ngIf="selectedRole.isDefault" class="text-red-700">[LOCKED]</span>
+        <span *ngIf="selectedRole.isFallback" class="text-yellow-700"> [DEFAULT]</span>
+      </h1>
+      <h1 *ngIf="!selectedRole">Project Role Overview</h1>
+
+      <span class="grow"></span>
+
+      <button mat-raised-button color="primary" type="button" (click)="addRole()">
+        <div class="flex items-center justify-center">
+          <p class="flex items-center justify-center">Add New Project Role</p>
+        </div>
+      </button>
+
+      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+        <div class="flex items-center justify-center">
+          <mat-icon>close</mat-icon>
+        </div>
+      </button>
+    </div>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="grow" autosize>
+    <mat-sidenav mode="side" opened="true">
+      <mat-nav-list>
+        <mat-list-item *ngFor="let role of roles; trackBy: trackByRole" (click)="selectRole(role)" [disabled]="role==selectedRole">
+          <div class="flex items-center justify-between gap-2">
+            <p>{{role.name}}</p>
+            <div class="flex items-center justify-center">
+              <mat-icon *ngIf="role.isFallback" class="scale-75">api</mat-icon>
+              <mat-icon *ngIf="role.isDefault" class="scale-75">lock</mat-icon>
+            </div>
+          </div>
+        </mat-list-item>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <div *ngIf="!selectedRole" class="flex justify-center items-center h-full">
+        <p class="flex items-center justify-center">Select a role to display settings.</p>
+      </div>
+
+      <div *ngIf="selectedRole">
+        <mat-tab-group>
+          <mat-tab label="Settings">
+            <div class="flex flex-col p-2 gap-2">
+              <mat-card class="grow">
+                <mat-card-header>
+                  <mat-card-title>General</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="pt-2" [formGroup]="roleForm">
+                    <mat-form-field>
+                      <mat-label>Role Name</mat-label>
+                      <input matInput formControlName="name">
+                      <mat-error *ngIf="roleForm?.get('name')?.required">
+                        Role name is required
+                      </mat-error>
+                      <mat-error *ngIf="roleForm.get('name')?.hasError('nameExists')">
+                        Role name must be unique
+                      </mat-error>
+                    </mat-form-field>
+                    <div class="flex flex-row-reverse gap-2">
+                      <button mat-raised-button color="primary" [disabled]="selectedRole.isDefault || !roleForm.valid || roleForm.pristine" class="mt-4" (click)="saveGeneral()">Update</button>
+                      <button mat-raised-button color="warn" [disabled]="selectedRole.isDefault" class="mt-4" (click)="deleteRole(selectedRole.id)">Delete</button>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="grow">
+                <mat-card-header>
+                  <mat-card-title>Permissions</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div *ngFor="let permission of permissions">
+                    <mat-checkbox
+                      [checked]="isPermissionAssigned(selectedRole.id, permission.permissionId)"
+                      [disabled]="selectedRole.isDefault"
+                      (change)="togglePermission($event.checked, selectedRole.id, permission.permissionId)">
+                      {{ permission.permissionName }}
+                    </mat-checkbox>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </mat-tab>
+          <mat-tab label="Members">
+            <div class="flex flex-col p-2 gap-2">
+              <div class="flex items-center justify-center" *ngIf="members.length === 0">
+                <p class="flex items-center justify-center">There are no members assigned to this role.</p>
+              </div>
+
+              <mat-card *ngFor="let member of members">
+                <mat-card-content>
+                  <div class="flex items-center gap-2">
+                    <img class="rounded-full" src="{{environment.apiUrl}}/Member/{{member.id}}/Avatar" height="64" width="64">
+                    <p class="text-2xl">{{member.firstName}} {{member.lastName}}</p>
+                    <span class="grow"></span>
+                    <a mat-button color="stroked" (click)="closeDialog()" href="members/{{member.id}}">
+                      <div class="flex items-center justify-center">
+                        <mat-icon class="scale-[1.25]">person</mat-icon>
+                      </div>
+                    </a>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

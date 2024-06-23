@@ -1,0 +1,90 @@
+/* You can add global styles to this file, and also import other style files */
+
+//   var(--mat-app-background-color, transparent)
+//var(--mat-app-text-color, inherit)
+
+@use '@worktile/gantt/styles/variables.scss' with (
+  // basic
+  $gantt-color: var(--mat-app-text-color, inherit),
+  $gantt-border-color: var(--mat-divider-color, inherit),
+  $gantt-bg-color: var(--mdc-elevated-card-container-color, transparent),
+  $gantt-side-shadow: 12px 0 16px -10px rgba(0, 0, 0, 0.15),
+  $gantt-container-background-color: var(--mat-app-background-color, transparent),
+  $gantt-group-background-color: var(----mat-toolbar-container-background-color, transparent),
+  $gantt-table-td-padding: 0 15px,
+
+  // calendar
+  $gantt-date-primary-color: var(--mat-app-text-color, inherit),
+  $gantt-date-primary-font-size: 14px,
+  $gantt-date-primary-border: var(--mat-divider-color, inherit),
+  $gantt-date-secondary-color: var(--mat-app-text-color, inherit),
+  $gantt-date-secondary-font-size: 14px,
+  $gantt-date-secondary-weekend-color: #aaa,
+  $gantt-date-week-backdrop-bg: rgba($color: #f3f3f3, $alpha: 0.5),
+  $gantt-date-today-color: #ff9f73,
+  $gantt-date-today-text-color: #fff,
+
+  // bar
+  $gantt-bar-bg: #fff,
+  $gantt-bar-layer-bg: var(--mdc-elevated-card-container-color, transparent),
+  $gantt-bar-handle-color: #cacaca,
+  $gantt-bar-handle-height: 12px,
+  $gantt-bar-background-color: var(--mdc-elevated-card-container-color, inherit),
+
+  // drag
+  $gantt-item-drag-mask-color: #6698ff,
+  $gantt-link-dragging-line-color: #6698ff,
+
+  // link
+  $gantt-link-line-color: #6698ff,
+
+  // table
+  $gantt-table-header-drag-line-width: 3px,
+  $gantt-table-header-drag-line-color: #6698ff
+);
+
+@import '@worktile/gantt/styles/index.scss';
+
+.gantt-table-header {
+  background-color: var(--mdc-elevated-card-container-color, transparent);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css?family=Inter');
+
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.cdk-overlay-container {
+  z-index: 500 !important;
+}
+
+.spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  border-top-color: #000000;
+  animation: spinner .8s linear infinite;
+}
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}

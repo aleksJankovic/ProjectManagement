@@ -1,0 +1,289 @@
+<div *ngIf="member | async as memberData" class="h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)]">
+  <div class="flex p-2 gap-2 flex-col md:flex-row h-full">
+    <mat-card class="basis-1/4">
+<!--      <mat-card-title class="p-4">-->
+<!--        <div class="flex flex-col gap-4">-->
+<!--          <p class="text-2xl flex justify-center items-center">Your Profile</p>-->
+<!--        </div>-->
+<!--      </mat-card-title>-->
+      <mat-card-content class="p-4 h-full">
+        <div class="flex flex-col items-center justify-center gap-8 h-full">
+          <img [src]="getAvatarLink()" alt="Profile Picture" width="128" height="128" class="select-none rounded-full"/>
+
+          <div class="flex flex-col items-center justify-center">
+            <p class="text-xl font-bold" md-colors="{color:'primary'}">{{memberData.firstName}} {{memberData.lastName}}</p>
+            <p>{{memberData.roleName}}</p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center gap-2 w-1/2">
+            <button type="button" color="primary" class="w-full" mat-raised-button (click)="fileInput.click()">UPLOAD AVATAR</button>
+            <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/*">
+            <button color="warn" mat-stroked-button class="w-full" (click)="deleteAvatar()">DELETE AVATAR</button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-tab-group class="grow">
+      <mat-tab label="Profile Settings">
+        <mat-card class="grow mt-2">
+          <mat-card-title class="p-4">
+            <div class="flex flex-col gap-4">
+              <div class="flex w-full justify-center gap-2">
+                <p class="text-2xl">Your Profile Settings</p>
+                <span class="grow"></span>
+                <button color="warn" mat-stroked-button routerLink="/members/all">CANCEL</button>
+                <button color="primary" mat-raised-button (click)="saveChanges()">SAVE</button>
+              </div>
+              <mat-divider class="w-full"></mat-divider>
+            </div>
+          </mat-card-title>
+
+          <mat-card-content class="p-4" [formGroup]="memberForm">
+            <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-4">
+                <p class="font-bold">Basic Information</p>
+                <mat-divider class="w-full"></mat-divider>
+                <div class="w-full flex flex-col gap-2 sm:flex-row">
+                  <mat-form-field class="grow">
+                    <mat-label>First Name</mat-label>
+                    <mat-hint>This is going to be displayed as your first name</mat-hint>
+                    <input matInput type="text" formControlName="firstName" required>
+                    <mat-error *ngIf="memberForm.get('firstName')?.hasError('required')">
+                      First Name is required.
+                    </mat-error>
+                    <mat-error *ngIf="memberForm.get('firstName')?.hasError('minlength')">
+                      First Name must be at least 2 characters long.
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field class="grow">
+                    <mat-label>Last Name</mat-label>
+                    <mat-hint>This is going to be displayed as your last name</mat-hint>
+                    <input matInput type="text" formControlName="lastName" required>
+                    <mat-error *ngIf="memberForm.get('lastName')?.hasError('required')">
+                      Last Name is required.
+                    </mat-error>
+                    <mat-error *ngIf="memberForm.get('lastName')?.hasError('minlength')">
+                      Last Name must be at least 2 characters long.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field>
+                  <mat-label>Date of Birth</mat-label>
+                  <input matInput [matDatepicker]="picker" [max]="today" formControlName="dateOfBirth" required>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  <mat-hint>Format of your birth date should be MM/DD/YYYY</mat-hint>
+                  <mat-error *ngIf="memberForm.get('dateOfBirth')?.hasError('maxDate')">
+                    Date of birth can not be in the future
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="grow">
+                  <mat-label>Your Status</mat-label>
+                  <mat-hint>This is going to be displayed as your status</mat-hint>
+                  <input matInput type="text" formControlName="status">
+                </mat-form-field>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <p class="font-bold">Contact Information</p>
+                <mat-divider class="w-full"></mat-divider>
+                <div class="w-full flex flex-col gap-2 sm:flex-row">
+                  <mat-form-field class="grow">
+                    <mat-label>Country</mat-label>
+                    <mat-hint>Country where you live in</mat-hint>
+                    <input matInput type="text" formControlName="country">
+                  </mat-form-field>
+
+                  <mat-form-field class="grow">
+                    <mat-label>City</mat-label>
+                    <mat-hint>City where you live in</mat-hint>
+                    <input matInput type="text" formControlName="city">
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field class="grow">
+                  <mat-label>Phone Number</mat-label>
+                  <mat-hint>Your phone number. Should be in format xxx-xxx-xxxx</mat-hint>
+                  <input matInput type="text" formControlName="phoneNumber">
+                  <mat-error *ngIf="memberForm.get('phoneNumber')?.hasError('pattern')">
+                    Bad number format, must be xxx-xxx-xxxx
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <p class="font-bold">Links</p>
+                <mat-divider class="w-full"></mat-divider>
+
+                <mat-form-field class="grow">
+                  <mat-label>Github</mat-label>
+                  <mat-hint>You should put the link to your github page here</mat-hint>
+                  <input matInput type="text" formControlName="github">
+                </mat-form-field>
+
+                <mat-form-field class="grow">
+                  <mat-label>LinkedIn</mat-label>
+                  <mat-hint>You should put the link to your github page here</mat-hint>
+                  <input matInput type="text" formControlName="linkedin">
+                </mat-form-field>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+      <mat-tab label="Account Settings">
+        <mat-card class="grow mt-2">
+          <mat-card-title class="p-4">
+            <div class="flex flex-col gap-4">
+              <div class="flex w-full justify-center gap-2">
+                <p class="text-2xl">Your Account Settings</p>
+                <span class="grow"></span>
+              </div>
+              <mat-divider class="w-full"></mat-divider>
+            </div>
+          </mat-card-title>
+
+          <mat-card-content class="p-4">
+            <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-4" [formGroup]="emailForm">
+                <div class="flex w-full justify-center items-center gap-2">
+                  <div class="flex items-center justify-center">
+                    <mat-icon class="scale-[1.25]">admin_panel_settings</mat-icon>
+                  </div>
+                  <p class="font-bold">Change Your Email</p>
+                  <span class="grow"></span>
+                  <button color="primary" mat-raised-button (click)="submitEmail()"
+                    [disabled]="!(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)">
+                    <div class="flex items-center justify-center gap-2">
+                      <mat-icon>admin_panel_settings</mat-icon>
+                      <p>CHANGE EMAIL</p>
+                    </div>
+                  </button>
+                </div>
+                <mat-divider class="w-full"></mat-divider>
+                <div class="w-full flex flex-col gap-2">
+                  <mat-form-field>
+                    <mat-label>Current Email</mat-label>
+                    <mat-hint>Your email was set by your administrator</mat-hint>
+                    <input matInput type="email" required formControlName="oldEmail">
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>New Email</mat-label>
+                    <mat-hint>If you wish to change it, please contact one of your administrators</mat-hint>
+                    <input matInput type="email" required formControlName="newEmail">
+                    <mat-error *ngIf="emailForm.get('newEmail')?.hasError('required')">
+                      New Email is required.
+                    </mat-error>
+                    <mat-error *ngIf="emailForm.get('newEmail')?.hasError('email')">
+                      New Email is not properly formatted.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <div class="flex w-full justify-center items-center gap-2">
+                  <div class="flex items-center justify-center">
+                    <mat-icon class="scale-[1.25]">admin_panel_settings</mat-icon>
+                  </div>
+                  <p class="font-bold">Change Your Role</p>
+                  <span class="grow"></span>
+                  <button color="primary" mat-raised-button (click)="submitRole()"
+                    [disabled]="!(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)">
+                    <div class="flex items-center justify-center gap-2">
+                      <mat-icon>admin_panel_settings</mat-icon>
+                      <p>CHANGE ROLE</p>
+                    </div>
+                  </button>
+                </div>
+
+                <mat-divider class="w-full"></mat-divider>
+
+                <div class="w-full flex flex-col gap-2" [formGroup]="roleForm">
+                  <mat-form-field>
+                    <mat-label>Current Role</mat-label>
+                    <mat-select required formControlName="oldRoleId" [disabled]="true">
+                      <mat-option *ngFor="let role of roles | async" [value]="role.id">{{role.name}}</mat-option>
+                    </mat-select>
+                    <mat-hint>Only your administrator can change your role.</mat-hint>
+                    <mat-error *ngIf="roleForm.get('oldRoleId')?.hasError('required')">
+                      Role is required
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>New Role</mat-label>
+                    <mat-select required formControlName="roleId">
+                      <mat-option *ngFor="let role of roles | async" [value]="role.id">{{role.name}}</mat-option>
+                    </mat-select>
+                    <mat-hint>Only your administrator can change your role.</mat-hint>
+                    <mat-error *ngIf="roleForm.get('roleId')?.hasError('required')">
+                      Role is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <div class="flex w-full justify-center items-center gap-2">
+                  <p class="font-bold">Change Your Password</p>
+                  <span class="grow"></span>
+                  <button color="warn" mat-stroked-button (click)="submitPasswordReset()"
+                    [disabled]="!(GlobalPermission.EDIT_MEMBER | hasGlobalPermission)">
+                    <div class="flex items-center justify-center gap-2">
+                      <mat-icon>admin_panel_settings</mat-icon>
+                      <p>RESET PASSWORD</p>
+                    </div>
+                  </button>
+                  <button color="primary" mat-raised-button (click)="submitPassword()">CHANGE PASSWORD</button>
+                </div>
+
+                <mat-divider class="w-full"></mat-divider>
+
+                <div class="w-full flex flex-col gap-2" [formGroup]="passwordForm">
+                  <mat-form-field>
+                    <mat-label>Current Password</mat-label>
+                    <mat-hint>Enter your current password</mat-hint>
+                    <input matInput type="password" required formControlName="oldPassword">
+                    <mat-error *ngIf="passwordForm.get('oldPassword')?.hasError('required')">
+                      Current password is required
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>New Password</mat-label>
+                    <mat-hint>Enter your new password</mat-hint>
+                    <input matInput  type="password" required formControlName="newPassword">
+                    <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('required')">
+                      New password is required
+                    </mat-error>
+                    <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('minlength')">
+                      New password must be at least 6 characters long
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>Confirm New Password</mat-label>
+                    <mat-hint>Confirm your new password</mat-hint>
+                    <input matInput type="password" required formControlName="confirmPassword">
+                    <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('required')">
+                      You must confirm your new password
+                    </mat-error>
+                    <mat-error *ngIf="passwordForm?.hasError('passwordMismatch')">
+                      New password and confirm password must match
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

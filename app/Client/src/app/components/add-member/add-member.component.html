@@ -1,0 +1,66 @@
+<div class="h-full flex flex-col select-none">
+  <mat-toolbar>
+    <div class="flex w-full gap-2 items-center min-h-16">
+      <h1>Add Member Form</h1>
+
+      <span class="grow"></span>
+
+      <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+        <div class="flex items-center justify-center">
+          <mat-icon>close</mat-icon>
+        </div>
+      </button>
+    </div>
+  </mat-toolbar>
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="memberForm" (ngSubmit)="addMember()">
+        <div class="flex flex-col gap-2">
+          <mat-form-field>
+            <mat-label>First Name</mat-label>
+            <input matInput type="text" placeholder="Ex. Pera" formControlName="firstName" required>
+            <mat-error *ngIf="memberForm.controls['firstName'].hasError('required')">
+              First Name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Last Name</mat-label>
+            <input matInput type="text" placeholder="Ex. Peric" formControlName="lastName" required>
+            <mat-error *ngIf="memberForm.controls['lastName'].hasError('required')">
+              Last Name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput type="email" placeholder="Ex. pera.peric@gmail.com" formControlName="email" required>
+            <mat-error *ngIf="memberForm.controls['email'].hasError('required')">
+              Email is required
+            </mat-error>
+            <mat-error *ngIf="memberForm.controls['email'].hasError('email')">
+              Please enter a valid email address
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Role</mat-label>
+            <mat-select formControlName="roleId" required>
+              <mat-option *ngFor="let role of availableRoles" [value]="role.id">{{ role.name }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="memberForm.controls['roleId'].hasError('required')">
+              Role is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <div class="flex w-full p-2">
+        <span class="grow"></span>
+        <button [disabled]="isLoading" [class.spinner]="isLoading" mat-raised-button type="submit" color="primary" (click)="addMember()">Add Member</button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

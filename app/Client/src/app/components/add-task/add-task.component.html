@@ -1,0 +1,96 @@
+<div class="flex flex-col select-none overflow-y-auto max-h-[720px]">
+    <mat-toolbar>
+      <div class="flex w-full gap-2 items-center min-h-16">
+        <h1>Add Task</h1>
+
+        <span class="grow"></span>
+
+        <button mat-button type="button" class="flex justify-center items-center" (click)="closeDialog()">
+          <div class="flex items-center justify-center">
+            <mat-icon>close</mat-icon>
+          </div>
+        </button>
+      </div>
+    </mat-toolbar>
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="taskForm" (ngSubmit)="saveTask()">
+          <div class="flex flex-col gap-2">
+            <mat-form-field>
+              <mat-label>Task Name</mat-label>
+              <input matInput type="text" placeholder="Ex. Figma" formControlName="taskName" required>
+              <mat-error *ngIf="taskForm.get('taskName')?.hasError('required')">
+                Task Name is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Deadline</mat-label>
+              <input matInput [matDatepicker]="picker" [min]="today" [max] = "projectDeadline" formControlName="deadline">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-hint>MM/DD/YYYY</mat-hint>
+              <mat-error *ngIf="taskForm.get('deadline')?.hasError('required')">
+                Deadline is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Priority</mat-label>
+              <mat-select formControlName="taskPriorityId" required>
+                <mat-option *ngFor="let taskPriority of taskPriorities" [value]="taskPriority.taskPriorityId">{{ taskPriority.name }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="taskForm.get('taskPriortyId')?.hasError('required')">
+                Priority is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Add Members</mat-label>
+              <mat-select formControlName="assignedMemberIds" required multiple>
+                <mat-option *ngFor="let member of projectMembers" [value]="member.id">
+                  {{ member.firstName }} {{ member.lastName }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="taskForm.get('assignedMemberIds')?.hasError('required')">
+                Members are required
+              </mat-error>
+              <mat-error *ngIf="taskForm.get('assignedMemberIds')?.hasError('minlength')">
+                At least one member must be selected
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Task Leader</mat-label>
+              <mat-select formControlName="taskLeaderId" required>
+                <mat-option *ngFor="let member of selectedMembers" [value]="member.id">
+                  {{ member.firstName }} {{ member.lastName }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="taskForm.get('taskLeaderId')?.hasError('required')">
+                A task leader is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Task Description</mat-label>
+                <textarea rows="4" matInput formControlName="taskDescription" placeholder="About this task..." required></textarea>
+                <mat-error *ngIf="taskForm.get('taskDescription')?.hasError('required')">
+                  Task description is required
+                </mat-error>
+              </mat-form-field>
+
+          </div>
+        </form>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <div class="flex w-full p-2 gap-2">
+          <span class="grow"></span>
+          <button [disabled]="isLoading" [class.spinner]="isLoading" mat-raised-button color="accent" (click)="generateDescription()">Generate Description with our AI</button>
+          <button mat-raised-button type="submit" color="primary" (click)="saveTask()"
+            [disabled]="isLoading" [class.spinner]="isLoading">Add Task</button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>

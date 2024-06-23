@@ -1,0 +1,39 @@
+table {
+  width: 100%;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
+
+.mat-header-cell-def {
+  text-align: center;
+}
+
+.mat-column-avatar {
+  text-align: left;
+}
+
+.mat-column-firstName {
+  text-align: left;
+}
+
+.mat-column-roleName {
+  text-align: left;
+}
+
+.mat-column-email {
+  text-align: left;
+}
+
+.mat-column-tasks {
+  text-align: left;
+}
+
+.mat-column-date {
+  text-align: left;
+}
+
+.mat-mdc-radio-button ~ .mat-mdc-radio-button {
+  margin-left: 16px;
+}

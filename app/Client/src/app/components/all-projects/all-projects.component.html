@@ -1,0 +1,140 @@
+<div class="flex flex-col mt-5 max-w-80% basis-[80%] items-center gap-4">
+    <div class="flex flex-col sm:flex-row items-center gap-5 w-4/5">
+
+          <mat-form-field class="w-96" subscriptSizing="dynamic">
+            <mat-label class="select-none">
+              <div class="flex items-center justify-between gap-2">
+                <p>Search Projects</p>
+                <mat-icon class="scale-125">search</mat-icon>
+              </div>
+            </mat-label>
+
+            <input matInput (keyup)="search($event)">
+          </mat-form-field>
+
+          <mat-form-field subscriptSizing="dynamic">
+            <mat-label class="select-none">Filter by status</mat-label>
+
+            <mat-select [value]="selectedStatus" [(ngModel)]="selectedStatus" (ngModelChange)="onStatusFilterChange($event)">
+              <mat-option [value]="defaultStatus">All Statuses</mat-option>
+              @for (projectStatus of projectStatuses; track projectStatus.projectStatusId) {
+                <mat-option [value]="projectStatus.projectStatusId">{{projectStatus.projectStatus}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+            <mat-form-field subscriptSizing="dynamic">
+              <mat-label class="select-none">Filter by priority</mat-label>
+
+              <mat-select [value]="selectedPriority" [(ngModel)]="selectedPriority" (ngModelChange)="onPriorityFilterChange($event)">
+                <mat-option [value]="defaultPriority">All Priorities</mat-option>
+                @for (projectPriority of projectPriorities; track projectPriority.priorityId) {
+                  <mat-option [value]="projectPriority.priorityId">{{projectPriority.priorityName}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+
+          <span class="grow"></span>
+
+          <button mat-raised-button color="primary" (click)="openDialog()" type="button" class="flex items-center justify-center"
+            [disabled]="!(GlobalPermission.CREATE_PROJECT | hasGlobalPermission)">Add Project</button>
+        </div>
+
+        <mat-divider class="w-[80%]"></mat-divider>
+
+        <div class="mat-elevation-z8 w-[80%] overflow-auto">
+          <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
+
+            <ng-container matColumnDef="projectName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by projectName"> PROJECT </th>
+              <td mat-cell *matCellDef="let project" style="width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: wrap;">
+                <a *ngIf="project.projectId | isAssignedToProject; else noAccess" class="hover:underline" [routerLink]="['/projects', project.projectId]">
+                  {{project.projectName}} #{{project.projectId}}
+                </a>
+
+                <ng-template #noAccess>
+                  <a class="text-gray-500 cursor-not-allowed" matTooltip="You aren't assigned to this project!">
+                    {{project.projectName}} #{{project.projectId}}
+                  </a>
+                </ng-template>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="startDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by startDate">START DATE </th>
+              <td mat-cell *matCellDef="let project"> {{project.startDate | date :'dd-MM-yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="deadline">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by endDate"> DUE DATE </th>
+              <td mat-cell *matCellDef="let project"> {{project.deadline | date :'dd-MM-yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by status">STATUS</th>
+              <td mat-cell *matCellDef="let project"> {{project.status}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="priority">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by status">PRIORITY</th>
+              <td mat-cell *matCellDef="let project"> {{project.projectPriority}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="manager">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> PROJECT MANAGER  </th>
+              <td mat-cell *matCellDef="let project">
+                <a class="hover:underline" [routerLink]="['/members', project.teamLider.id]">
+                  {{project.teamLider.firstName}} {{project.teamLider.lastName}}
+                </a>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> ACTIONS </th>
+              <td mat-cell *matCellDef="let project">
+                <button class="font-extrabold text-3xl"
+                        mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+                  <div class="flex items-center justify-center">
+                    <mat-icon>view_headline</mat-icon>
+                  </div>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item [routerLink]="['/projects', project.projectId]"
+                    [disabled]="!(project.projectId | isAssignedToProject)">View</button>
+<!--                  <button mat-menu-item class="p-2 bg-red-500 rounded-md font-semibold text-black" (click)="clickMethod(project.projectName, project.projectId, project.status)">Delete</button>&ndash;&gt;-->
+                </mat-menu>
+              </td>
+            </ng-container>
+
+          <tr class="select-none" mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator class="select-none" [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
+      </div>
+ </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

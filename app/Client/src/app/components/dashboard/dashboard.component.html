@@ -1,0 +1,187 @@
+<div class="flex flex-col mt-5 max-w-80% items-center">
+
+  <div class="flex flex-row  gap-5 mb-2 items-center border-b-gray-300 border-b-[1px] pb-2 w-4/5">
+    <mat-form-field class="w-96" subscriptSizing="dynamic">
+      <mat-label class="select-none">
+        <div class="flex items-center justify-between gap-2">
+          <p>Search projects</p>
+          <mat-icon class="scale-125">search</mat-icon>
+        </div>
+      </mat-label>
+
+      <input matInput (input)="searchProj($event)">
+    </mat-form-field>
+
+
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Filter by status</mat-label>
+
+      <mat-select [value]="selectedStatus" [(ngModel)]="selectedStatus" (ngModelChange)="onStatusChange($event)">
+        <mat-option [value]="defaultStatus">All Projects</mat-option>
+        @for (projectStatus of projectStatuses; track projectStatus.projectStatusId) {
+          <mat-option [value]="projectStatus.projectStatusId">{{projectStatus.projectStatus}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Filter by priority</mat-label>
+
+      <mat-select [value]="selectedPriority" [(ngModel)]="selectedPriority" (ngModelChange)="onPriorityFilterChange($event)">
+        <mat-option [value]="defaultPriority">All Priorities</mat-option>
+        @for (projectPriority of projectPriorities; track projectPriority.priorityId) {
+          <mat-option [value]="projectPriority.priorityId">{{projectPriority.priorityName}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <span class="grow"></span>
+
+  </div>
+
+  <div class="mat-elevation-z8 w-4/5 mb-4">
+    <table mat-table [dataSource]="projectSource" matSort (matSortChange)="announceSortChange($event)">
+
+      <ng-container matColumnDef="projectName">
+        <th mat-header-cell *matHeaderCellDef  mat-sort-header sortActionDescription="Sort by projectName">PROJECT</th>
+        <td mat-cell *matCellDef="let project" style="width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: wrap;"> <a class="hover:underline" [routerLink]="['/projects', project.projectId]">
+          {{project.projectName}}
+        </a></td>
+      </ng-container>
+
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by startDate">START DATE </th>
+        <td mat-cell *matCellDef="let project"> {{project.startDate | date :'dd-MM-yyyy'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="deadline">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by deadline">DUE DATE</th>
+        <td mat-cell *matCellDef="let project"> {{project.deadline | date :'dd-MM-yyyy'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by status">STATUS</th>
+        <td mat-cell *matCellDef="let project"> {{project.status}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="projectPriority">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by projectPriority">PRIORITY</th>
+        <td mat-cell *matCellDef="let project">{{project.projectPriority}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>ACTIONS</th>
+        <td mat-cell *matCellDef="let project">
+          <button class="font-extrabold text-3xl" mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+            <div class="flex items-center justify-center">
+              <mat-icon>view_headline</mat-icon>
+            </div>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item [routerLink]="['/projects', project.projectId]">View</button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr class="select-none" mat-header-row *matHeaderRowDef="projectColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: projectColumns;"></tr>
+    </table>
+
+    <mat-paginator class="select-none" [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
+  </div>
+
+  <div class="flex justify-between w-4/5 mb-5">
+    <mat-card class="flex flex-col items-center w-full max-w-[20%] rounded-xl shadow-md p-5 select-none">
+      <p class="text-xl">Total tasks</p>
+      <p class="text-2xl">{{ totalTasks }}</p>
+    </mat-card>
+    <mat-card class="flex flex-col items-center w-full max-w-[20%] rounded-xl shadow-md p-5 select-none">
+      <p class="text-xl">New tasks</p>
+      <p class="text-2xl">{{ newTasks }}</p>
+    </mat-card>
+    <mat-card class="flex flex-col items-center w-full max-w-[20%] rounded-xl shadow-md p-5 select-none">
+      <p class="text-xl">Started tasks</p>
+      <p class="text-2xl">{{ startedTasks }}</p>
+    </mat-card>
+    <mat-card class="flex flex-col items-center w-full max-w-[20%] rounded-xl shadow-md p-5 select-none">
+      <p class="text-xl">Completed tasks</p>
+      <p class="text-2xl">{{ completedTasks }}</p>
+    </mat-card>
+  </div>
+
+  <div class="flex flex-row gap-5  mb-2 items-center border-b-gray-300 border-b-[1px] pb-2 gap-5 w-4/5">
+    <mat-form-field class="w-96" subscriptSizing="dynamic">
+    <mat-label class="select-none">
+      <div class="flex items-center justify-between gap-2">
+        <p>Search tasks</p>
+        <mat-icon class="scale-125">search</mat-icon>
+      </div>
+    </mat-label>
+
+    <input matInput (keyup)="searchTask($event)">
+  </mat-form-field>
+
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label class="select-none">Filter by priority</mat-label>
+
+      <mat-select [value]="selectedTaskPriority" [(ngModel)]="selectedTaskPriority" (ngModelChange)="onTaskPriorityFilterChange($event)">
+        <mat-option [value]="defaultTaskPriority">All Priorities</mat-option>
+        @for (taskPriority of taskPriorities; track taskPriority.taskPriorityId) {
+          <mat-option [value]="taskPriority.taskPriorityId">{{taskPriority.name}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <span class="grow"></span>
+
+  </div>
+
+  <div class="mat-elevation-z8 w-4/5">
+    <table mat-table [dataSource]="taskSource" matSort (matSortChange)="announceSortChange($event)">
+
+      <ng-container matColumnDef="taskName">
+        <th mat-header-cell *matHeaderCellDef  mat-sort-header sortActionDescription="Sort by taskName">TASK</th>
+        <td (click)="openDialog(task)" class="hover:cursor-pointer hover:underline" mat-cell *matCellDef="let task" style="width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: wrap;"> {{task.taskName}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by startDate">START DATE </th>
+        <td mat-cell *matCellDef="let task"> {{task.startDate | date :'dd-MM-yyyy'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="deadline">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by deadline">DUE DATE</th>
+        <td mat-cell *matCellDef="let task"> {{task.deadline | date :'dd-MM-yyyy'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="taskPriorityName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by taskPriorityName">PRIORITY</th>
+        <td mat-cell *matCellDef="let task">{{task.taskPriorityName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="taskStatus">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by status">STATUS</th>
+        <td mat-cell *matCellDef="let task"> {{task.taskStatus}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>ACTIONS</th>
+        <td mat-cell *matCellDef="let task">
+          <button class="font-extrabold text-3xl" mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+            <div class="flex items-center justify-center">
+              <mat-icon>view_headline</mat-icon>
+            </div>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button (click)="openDialog(task)" mat-menu-item>View</button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr class="select-none" mat-header-row *matHeaderRowDef="taskColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: taskColumns;"></tr>
+    </table>
+
+    <mat-paginator class="select-none" [pageSizeOptions]="[5, 10, 25]" aria-label="Select page of users"></mat-paginator>
+  </div>
+</div>

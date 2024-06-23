@@ -1,0 +1,23 @@
+.large-icon {
+    font-size: 80px;
+    height: 80px;
+    width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+  }
+
+  .critical {
+    color: red;
+  }
+  
+  .overdue {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .overdue-message {
+    color: red;
+    font-weight: bold;
+  }

@@ -1,0 +1,25 @@
+version: '3'
+services:
+  ollama-container:
+    image: ollama/ollama
+    volumes:  
+      - ./data/ollama:/root/.ollama
+      - ./entrypoint.sh:/entrypoint.sh
+    ports:
+      - 12325:11434
+    pull_policy: always
+    tty: true
+    restart: always
+    container_name: logic_tenacity_llm
+    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - OLLAMA_ORIGINS=*
+    command: nvidia-smi
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]

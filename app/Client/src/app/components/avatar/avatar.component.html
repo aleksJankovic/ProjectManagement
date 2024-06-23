@@ -1,0 +1,17 @@
+<button *ngIf="member" mat-button (click)="openMemberInfoDialog(member)">
+  <img ngSrc="{{environment.apiUrl}}/Member/{{member.id}}/Avatar" [width]="width" [height]="height" alt="Avatar" class="rounded-full">
+  <div *ngIf="status" class="absolute bottom-0 right-0 w-[12px] h-[12px] bg-green-500 rounded-full flex items-center justify-center border-[1px] border-black">
+    <div class="flex items-center justify-center">
+      <mat-icon class="scale-50" [ngStyle]="{'color':'white'}">
+        check
+      </mat-icon>
+    </div>
+  </div>
+  <div *ngIf="!status" class="absolute bottom-0 right-0 w-[12px] h-[12px] bg-red-500 rounded-full flex items-center justify-center border-[1px] border-black">
+    <div class="flex items-center justify-center">
+      <mat-icon class="scale-50" [ngStyle]="{'color':'white'}">
+        close
+      </mat-icon>
+    </div>
+  </div>
+</button>
